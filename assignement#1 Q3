@@ -1,0 +1,59 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Given alpha
+alpha = 0.1
+
+# Define the unit impulse function
+# Define the unit step function
+def u(n):
+    return np.where(n >= 0, 1, 0)
+
+def delta(n):
+    return np.where(n == 0, 1, 0)
+
+# Define x[n]
+n = np.arange(0, 200)
+x = 4 * delta(n) + 0.8 * np.sin(0.05 * np.pi * n) * u(n)
+
+# Initialize y[n]
+y = np.zeros_like(n, dtype=float)
+
+# Compute y[n] using the difference equation
+for i in range(1, len(n)):
+    y[i] = x[i] - alpha * y[i-1]
+
+# Plot y[n]
+plt.figure(figsize=(10, 6))
+plt.stem(n, y, basefmt=" ", use_line_collection=True)
+plt.title('y[n] using recursive computation')
+plt.xlabel('n')
+plt.ylabel('y[n]')
+plt.grid(True)
+plt.show()
+
+# Frequency response
+from scipy.signal import freqz
+
+b = [1]  # numerator coefficients
+a = [1, alpha]  # denominator coefficients
+
+w, h = freqz(b, a)
+
+# Plot amplitude response
+plt.figure(figsize=(10, 6))
+plt.plot(w, np.abs(h))
+plt.title('Amplitude Response')
+plt.xlabel('Frequency (rad/sample)')
+plt.ylabel('Amplitude')
+plt.grid(True)
+plt.show()
+
+# Plot phase response
+plt.figure(figsize=(10, 6))
+plt.plot(w, np.angle(h))
+plt.title('Phase Response')
+plt.xlabel('Frequency (rad/sample)')
+plt.ylabel('Phase (radians)')
+plt.grid(True)
+plt.show()
